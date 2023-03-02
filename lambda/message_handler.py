@@ -13,6 +13,9 @@ def consumer(event, context):
     for record in event['Records']:
         logger.info(f'Message body: {record["body"]}')
         #logger.info(f'Message attribute: {record["messageAttributes"]["AttributeName"]["stringValue"]}')
+        body = json.loads(record["body"])
+        name = body['name']  # validar o nome, o email e a senha ver se algum dos campos está vazio, dentro de um try catch
+        logger.info(name)
 
 
 

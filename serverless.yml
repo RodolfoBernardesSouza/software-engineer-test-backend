@@ -1,0 +1,159 @@
+service: sandbox-test-wg
+frameworkVersion: '3'
+
+plugins:
+  - serverless-lift
+  - serverless-iam-roles-per-function
+
+custom:
+  tableName: '${self:service}-${opt:stage, self:provider.stage}-cache'
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": [ "cacheTable", "Arn" ] }
+  environment:
+    CACHE_TABLE: ${self:custom.tableName}
+    REGION: ${self:provider.region}
+
+resources:
+  Resources:
+    cacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: partitionKey
+            AttributeType: S
+          - AttributeName: sortKey
+            AttributeType: S
+        KeySchema:
+          - AttributeName: partitionKey
+            KeyType: HASH
+          - AttributeName: sortKey
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    messageTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${opt:stage, self:provider.stage}-messageTopic
+
+    inputMessageQueue:
+      Type: AWS::SQS::Queue
+      DependsOn:
+        - inputMessageDLQ
+      Properties:
+        QueueName: ${self:service}-${opt:stage, self:provider.stage}-inputMessageQueue
+        RedrivePolicy:
+          deadLetterTargetArn: { Fn::GetAtt: [inputMessageDLQ, Arn] }
+          maxReceiveCount: 1
+
+    inputMessageDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${opt:stage, self:provider.stage}-inputMessageDLQ
+        MessageRetentionPeriod: 1209600 # 14 days in seconds
+
+    cacheMessageQueue:
+      Type: AWS::SQS::Queue
+      DependsOn:
+        - cacheMessageDLQ
+      Properties:
+        QueueName: ${self:service}-${opt:stage, self:provider.stage}-cacheMessageQueue
+        RedrivePolicy:
+          deadLetterTargetArn: { Fn::GetAtt: [cacheMessageDLQ, Arn] }
+          maxReceiveCount: 1
+
+    cacheMessageDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${opt:stage, self:provider.stage}-cacheMessageDLQ
+        MessageRetentionPeriod: 1209600 # 14 days in seconds
+
+    cacheMessageQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      DependsOn:
+        - messageTopic
+        - cacheMessageQueue
+      Properties:
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Resource: { Fn::GetAtt: [cacheMessageQueue, Arn] }
+              Action:
+                - SQS:SendMessage
+                - SQS:ReceiveMessage
+              Condition:
+                ArnEquals:
+                  aws:SourceArn:
+                    - { Ref: messageTopic }
+        Queues:
+          - { Ref: cacheMessageQueue }
+
+    cacheMessagerQueueMessageTopicSubscription:
+      Type: AWS::SNS::Subscription
+      DependsOn:
+        - messageTopic
+        - cacheMessageQueue
+      Properties:
+        TopicArn: { Ref: messageTopic }
+        Endpoint: { Fn::GetAtt: [cacheMessageQueue, Arn] }
+        Protocol: sqs
+        RawMessageDelivery: true
+
+functions:
+  cacheHandler:
+    handler: lambda/cache_handler.consumer
+    events:
+      - sqs:
+          arn: { Fn::GetAtt: [cacheMessageQueue, Arn] }
+          batchSize: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource:
+          - { Fn::GetAtt: [ cacheMessageQueue, Arn ] }
+
+  messageHandler:
+    handler: lambda/message_handler.consumer
+    events:
+      - sqs:
+          arn: { Fn::GetAtt: [ inputMessageQueue, Arn ] }
+          batchSize: 1
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource:
+          - { Fn::GetAtt: [ inputMessageQueue, Arn ] }
+      - Effect: Allow
+        Action:
+          - sns:publish
+        Resource:
+          - { Ref: messageTopic }
+    iamRoleStatementsInherit: true
+
+package:
+  patterns:
+    - '!node_modules/**'
