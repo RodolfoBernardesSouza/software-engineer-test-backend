@@ -1,4 +1,4 @@
-service: sandbox-test-wg
+service: software-engineer-test-backend
 frameworkVersion: '3'
 
 plugins:
