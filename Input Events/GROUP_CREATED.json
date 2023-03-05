@@ -1,0 +1,7 @@
+{
+   "entityType":"GROUP",
+   "eventType":"GROUP_CREATED",
+   "eventData":{
+      "name":"developers"
+   }
+}

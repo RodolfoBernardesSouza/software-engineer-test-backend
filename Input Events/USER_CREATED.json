@@ -1,0 +1,13 @@
+{
+   "entityType":"USER",
+   "eventType":"USER_CREATED",
+   "eventData":{
+      "name":"joazinho",
+      "email":"abc@wow.com",
+      "password" : "xpto",
+      "groups":[
+         "111",
+         "222"
+      ]
+   }
+}

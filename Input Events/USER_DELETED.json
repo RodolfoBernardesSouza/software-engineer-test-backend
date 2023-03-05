@@ -1,0 +1,7 @@
+{
+   "entityType":"USER",
+   "eventType":"USER_DELETED",
+   "eventData":{
+      "email":"ze@wow.com"
+   }
+}

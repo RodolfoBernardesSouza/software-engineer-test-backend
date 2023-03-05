@@ -1,0 +1,13 @@
+{
+   "entityType":"USER",
+   "eventType":"USER_UPDATED",
+   "eventData":{
+      "name":"zezinho",
+      "email":"ze@wow.com",
+      "password" : "abcd",
+      "groups":[
+         "333",
+         "444"
+      ]
+   }
+}
