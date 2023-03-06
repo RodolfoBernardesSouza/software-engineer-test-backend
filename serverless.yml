@@ -119,7 +119,7 @@ resources:
 
 functions:
   cacheHandler:
-    handler: lambda/cache_handler.consumer
+    handler: src/lambda/cache_handler.consumer
     events:
       - sqs:
           arn: { Fn::GetAtt: [cacheMessageQueue, Arn] }
@@ -134,7 +134,7 @@ functions:
           - { Fn::GetAtt: [ cacheMessageQueue, Arn ] }
 
   messageHandler:
-    handler: lambda/message_handler.consumer
+    handler: src/lambda/message_handler.consumer
     events:
       - sqs:
           arn: { Fn::GetAtt: [ inputMessageQueue, Arn ] }

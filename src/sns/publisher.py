@@ -3,8 +3,8 @@ import uuid
 import hashlib
 import boto3
 
-from common.config import CustomLog
-from common.config import Environment
+from src.common.config import CustomLog
+from src.common.config import Environment
 
 env = Environment()
 log = CustomLog().setup_logger()
@@ -43,7 +43,7 @@ class UserSNSEventModel:
             'groups': message_event_data['groups'],
             'password': UserSNSEventModel.__hash_password(password=message_event_data['password'])
         })
-        return EnvelopModel.build_event_envelop(message=message,event_data=user_data)
+        return EnvelopModel.build_event_envelop(message=message, event_data=user_data)
 
     @staticmethod
     def build_user_delete_sns_event(*, message: dict) -> dict:
@@ -54,7 +54,7 @@ class UserSNSEventModel:
             'groups': '',
             'password': ''
         })
-        return EnvelopModel.build_event_envelop(message=message,event_data=user_data)
+        return EnvelopModel.build_event_envelop(message=message, event_data=user_data)
 
     @staticmethod
     def __hash_password(*, password: str) -> str:
@@ -79,7 +79,7 @@ class GroupSNSEventModel:
         group_data = dict({
             'name': message_event_data['name']
         })
-        return EnvelopModel.build_event_envelop(message=message,event_data=group_data)
+        return EnvelopModel.build_event_envelop(message=message, event_data=group_data)
 
 
 class EnvelopModel:
