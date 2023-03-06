@@ -1,10 +1,10 @@
 import sys
 import json
-from common.config import CustomLog
-from common.config import JsonSchema
-from sns.publisher import SNSPublisher
+from src.common.config import CustomLog
+from src.common.config import JsonSchema
+from src.sns.publisher import SNSPublisher
 
-sys.path.insert(0, 'src/vendor')
+sys.path.insert(0, '3pp_lib/vendor')
 import jsonschema
 
 log = CustomLog().setup_logger()
