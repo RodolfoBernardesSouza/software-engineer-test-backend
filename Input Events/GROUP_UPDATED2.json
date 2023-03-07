@@ -1,0 +1,7 @@
+{
+   "entityType":"GROUP",
+   "eventType":"GROUP_UPDATED",
+   "eventData":{
+      "name":"developers"
+   }
+}

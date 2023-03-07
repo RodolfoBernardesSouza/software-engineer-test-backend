@@ -1,3 +1,105 @@
+# Software Engineer Test Backend
+
+The purpose of this repository is to solve the WatchGuard hiring challenge.  This Implementation is deployed on my AWS account and to accomplish that I've created a basic CD using the Serverless Framework and the GitHub actions as follow the diagram below:
+
+
+
+![CD](C:\Users\rodol\Desktop\POC WG\CD.jpeg)
+
+## How it woks
+
+The `serverless.yml` file  contains the definition of the AWS resources (e.g. functions, the events that trigger them, dynamo table, queues and topics) used in this solution. Find below the architecture diagram with all pieces:
+
+![solution-architecture](C:\Users\rodol\Documents\code\software-engineer-test-backend\solution-architecture.png)
+
+1- The SQS insert commands are sent trough the AWS CLI to the **Input Message Queue** . These commands contain the USERS and the GROUPS.
+
+```shell
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://<EventFile>.json --delay-seconds 1
+```
+
+2- The messages are consumed by the lambda function **Message Handler**. This lambda will do some basic validation and <u>hash the password</u>.
+
+```python
+@staticmethod
+def __hash_password(*, password: str) -> str:
+    log.info('hashing password')
+    byte_password = password.encode('utf-8')
+
+    # Generate salt
+    salt = uuid.uuid4().hex
+
+    # Hash password
+    password_hash_salt = hashlib.sha256(salt.encode() + byte_password).hexdigest() + ':' + salt
+    #log.debug(f'byte_hash {password_hash_salt}')
+
+    return password_hash_salt
+```
+
+3- The lambda **Message Handler** publishes the valid events on the SNS **Message Topic**.
+
+4- The **Cache Message Queue** subscribes to the **Message Topic**.
+
+5- The messages are consumed by the lambda function **Cache Handler**.
+
+6-The lambda **Cache Handler** parse the raw messages form the **Cache Message Queue** and does writes/reads in the **Cache DynamoDB Table** .
+
+If any error occurs during the events processing the message will be automatically sent to the DLQs
+
+## Database Model
+
+The DynamoDB was picked because it is serverless and billed by the usage (I'm using a free tier AWS account). 
+
+To make things simple I've created two main entities GROUP and USER and a third one to represent the relation between them. This is not the best solution since dynamoDB is noSQL (see the Adjacency List Pattern in the assumption section).
+
+USER model:
+
+```json
+{
+   "partittionKey":"USER|uuid(email)",
+   "sortKey":"USER",
+   "name":"joazinho",
+   "email":"abc@wow.com",
+   "password":"xpto",
+   "groups":[
+      "111",
+      "222"
+   ]
+}
+```
+
+GROUP model:
+
+```json
+{"partittionKey":"GROUP|uuid(name)",
+   "sortKey":"GROUP",
+    "name":"developers"
+}
+```
+
+GROUP_MEMBER model
+
+```json
+{
+   "partittionKey":"GROUP|uuid(name)",
+   "sortKey":"GROUP_MEMBER|uuid(email)",
+}
+```
+
+
+
+## Assumptions
+
+Considering the time constraints and the scope of work I created some assumptions
+
+1- You cannot delete a GROUP if there are USERS inside. *My comments: Its possible to be implemented however it demands time and better strategy to deal with DynamoDB (Adjacency List Pattern)* https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-adjacency-graphs.html
+
+2- So far you cannot update a GROUP if there are USERS inside. *My comments: the GROUP name is the partition key of the group entity. If you change the name you have to change all related users. Again, this demands time and can be solved with the Adjacency List Pattern.*
+
+3-So far you cannot update a USER email. *My comments: the USER email is the partition key of the user entity. If you change the email you have to change all related GROUP_MEMBERS. Again, this demands time and can be solved with the Adjacency List Pattern.*
+
+4- It is possible to turn on the AWS encryption between services but for now this is off (I have to do a discovery, also understand the costs of using it)  
+
 <!--
 title: 'Serverless Framework Python SQS Producer-Consumer on AWS'
 description: 'This template demonstrates how to develop and deploy a simple SQS-based producer-consumer service running on AWS Lambda using the traditional Serverless Framework.'
