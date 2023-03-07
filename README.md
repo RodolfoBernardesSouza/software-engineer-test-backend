@@ -4,19 +4,21 @@ The purpose of this repository is to solve the WatchGuard hiring challenge.  Thi
 
 
 
-![CD](C:\Users\rodol\Desktop\POC WG\CD.jpeg)
+![CD](doc/Images/CD.jpeg)
 
 ## How it woks
 
 The `serverless.yml` file  contains the definition of the AWS resources (e.g. functions, the events that trigger them, dynamo table, queues and topics) used in this solution. Find below the architecture diagram with all pieces:
 
-![solution-architecture](C:\Users\rodol\Documents\code\software-engineer-test-backend\solution-architecture.png)
+![solution-architecture](doc/Images/solution-architecture.png)
 
 1- The SQS insert commands are sent trough the AWS CLI to the **Input Message Queue** . These commands contain the USERS and the GROUPS.
 
 ```shell
 aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://<EventFile>.json --delay-seconds 1
 ```
+
+All the event files referenced in the command above are in the directory `../doc/Input Events`
 
 2- The messages are consumed by the lambda function **Message Handler**. This lambda will do some basic validation and <u>hash the password</u>.
 
