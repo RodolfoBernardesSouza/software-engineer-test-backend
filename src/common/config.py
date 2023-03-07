@@ -11,6 +11,13 @@ class Environment:
     sns_topic_arn: str = 'arn:aws:sns:us-east-1:849681156123:software-engineer-test-backend-dev-messageTopic'
 
 
+@dataclass
+class DatabaseConstants:
+    ENTITY_TYPE_USER = 'USER'
+    ENTITY_TYPE_GROUP = 'GROUP'
+    ENTITY_TYPE_GROUP_MEMBER = 'GROUP_MEMBER'
+
+
 class CustomLog:
 
     @staticmethod
