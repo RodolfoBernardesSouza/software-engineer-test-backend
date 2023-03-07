@@ -15,7 +15,6 @@ group_schema = JsonSchema().group_schema
 
 def consumer(event, context):
     log.info(f'Lambda triggerd from SQS. Raw event: {event}')
-
     try:
         body = extract_body(event=event)
         json_body = json.loads(body)
@@ -23,7 +22,6 @@ def consumer(event, context):
     except Exception as ex:  # improve: catch the particular exception
         log.error(f'Invalid message. This event will be send to DLQ. {ex}')
         raise ex
-
     log.info(f'Given JSON data is Valid {json_body}')
     SNSPublisher().publish(message=json_body)
 
