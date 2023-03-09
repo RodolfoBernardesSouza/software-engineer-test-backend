@@ -84,7 +84,7 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:service}-${opt:stage, self:provider.stage}-cacheMessageDLQ
-        MessageRetentionPeriod: 1209600 # 14 days in seconds
+        MessageRetentionPeriod: 1209600 # 14 days in seconds 
 
     cacheMessageQueuePolicy:
       Type: AWS::SQS::QueuePolicy
