@@ -1,0 +1,8 @@
+{
+   "entityType":"GROUP",
+   "eventType":"GROUP_UPDATED",
+   "eventData":{
+      "name":"Developers 2.0",
+      "id":"fc799da2088d4e67e8481653d88c9601a83fcba3855e41d212de938c8a3574ae"
+   }
+}

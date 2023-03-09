@@ -1,0 +1,32 @@
+GROUP_CREATED_ADM.json
+GROUP_CREATED_RH.json
+USER_CREATED_ANA.json
+
+*******************************************
+
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://XXXXXXXX.json --delay-seconds 1
+
+GROUP_CREATED_DEV.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_CREATED_DEV.json --delay-seconds 1
+GROUP_CREATED_NO_USERS.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_CREATED_NO_USERS.json --delay-seconds 1
+USER_CREATED_RODOLFO.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://USER_CREATED_RODOLFO.json --delay-seconds 1
+
+GROUP_DELETED_DEVS.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_DELETED_DEVS.json --delay-seconds 1
+GROUP_DELETED_NO_USERS.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_DELETED_NO_USERS.json --delay-seconds 1
+
+GROUP_UPDATED_RH.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_UPDATED_RH.json --delay-seconds 1
+USER_UPDATED_RODOLFO.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://USER_UPDATED_RODOLFO.json --delay-seconds 1
+
+USER_DELETED_RODOLFO.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://USER_DELETED_RODOLFO.json --delay-seconds 1
+GROUP_DELETED_DEVS.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_DELETED_DEVS.json --delay-seconds 1
+
+
+*********************************************
+
+
+USER_DELETED.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://USER_DELETED.json --delay-seconds 1
+GROUP_DELETED.json // aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/849681156123/software-engineer-test-backend-dev-inputMessageQueue --message-body file://GROUP_DELETED.json --delay-seconds 1
+
+
+
+
+

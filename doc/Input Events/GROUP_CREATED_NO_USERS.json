@@ -2,6 +2,6 @@
    "entityType":"GROUP",
    "eventType":"GROUP_CREATED",
    "eventData":{
-      "name":"marketing"
+      "name":"No Users"
    }
 }

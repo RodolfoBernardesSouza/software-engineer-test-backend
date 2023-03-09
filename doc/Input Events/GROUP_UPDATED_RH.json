@@ -1,0 +1,8 @@
+{
+   "entityType":"GROUP",
+   "eventType":"GROUP_UPDATED",
+   "eventData":{
+      "name":"Human Resorces",
+      "id":"GROUP|244695bc725a3e8c61865ae2715e5bc6438b990a944964f392046a890d92449d"
+   }
+}
