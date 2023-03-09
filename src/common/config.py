@@ -8,7 +8,7 @@ from logging import Logger
 class Environment:
     aws_region: str = getenv('REGION')
     table_name: str = getenv('CACHE_TABLE')
-    sns_topic_arn: str = 'arn:aws:sns:us-east-1:849681156123:sandbox-test-wg-dev-messageTopic'
+    sns_topic_arn: str = 'arn:aws:sns:us-east-1:849681156123:software-engineer-test-backend-dev-messageTopic'
 
 
 @dataclass
