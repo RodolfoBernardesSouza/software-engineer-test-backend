@@ -2,6 +2,6 @@
    "entityType":"USER",
    "eventType":"USER_DELETED",
    "eventData":{
-      "email":"ze@wow.com"
+      "id":"ea6422639cafdbbc3c9856962d54f98a7cfda8bf40eabd260b387b573cea69d7"
    }
 }

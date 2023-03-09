@@ -4,13 +4,13 @@ The purpose of this repository is to solve the WatchGuard hiring challenge.  Thi
 
 
 
-![CD](doc/Images/CD.jpeg)
+![CD](C:/Users/rodol/Documents/code/software-engineer-test-backend/doc/Images/CD.jpeg)
 
 ## How it woks
 
 The `serverless.yml` file  contains the definition of the AWS resources (e.g. functions, the events that trigger them, dynamo table, queues and topics) used in this solution. Find below the architecture diagram with all pieces:
 
-![solution-architecture](doc/Images/solution-architecture.png)
+![solution-architecture](C:/Users/rodol/Documents/code/software-engineer-test-backend/doc/Images/solution-architecture.png)
 
 1- The SQS insert commands are sent trough the AWS CLI to the **Input Message Queue** . These commands contain the USERS and the GROUPS.
 
@@ -58,7 +58,7 @@ USER model:
 
 ```json
 {
-   "partittionKey":"USER|uuid(email)",
+   "partittionKey":"USER|hash(email)",
    "sortKey":"USER",
    "name":"joazinho",
    "email":"abc@wow.com",
@@ -73,7 +73,7 @@ USER model:
 GROUP model:
 
 ```json
-{"partittionKey":"GROUP|uuid(name)",
+{"partittionKey":"GROUP|hash(name)",
    "sortKey":"GROUP",
     "name":"developers"
 }
@@ -83,8 +83,8 @@ GROUP_MEMBER model
 
 ```json
 {
-   "partittionKey":"GROUP|uuid(name)",
-   "sortKey":"GROUP_MEMBER|uuid(email)",
+   "partittionKey":"GROUP|hash(name)",
+   "sortKey":"GROUP_MEMBER|hash(email)",
 }
 ```
 
@@ -96,11 +96,7 @@ Considering the time constraints and the scope of work I created some assumption
 
 1- You cannot delete a GROUP if there are USERS inside. *My comments: Its possible to be implemented however it demands time and better strategy to deal with DynamoDB (Adjacency List Pattern)* https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-adjacency-graphs.html
 
-2- So far you cannot update a GROUP if there are USERS inside. *My comments: the GROUP name is the partition key of the group entity. If you change the name you have to change all related users. Again, this demands time and can be solved with the Adjacency List Pattern.*
-
-3-So far you cannot update a USER email. *My comments: the USER email is the partition key of the user entity. If you change the email you have to change all related GROUP_MEMBERS. Again, this demands time and can be solved with the Adjacency List Pattern.*
-
-4- It is possible to turn on the AWS encryption between services but for now this is off (I have to do a discovery, also understand the costs of using it)  
+2- It is possible to turn on the AWS encryption between services but for now this is off (I have to do a discovery, also understand the costs of using it)  
 
 <!--
 title: 'Serverless Framework Python SQS Producer-Consumer on AWS'

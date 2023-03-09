@@ -2,6 +2,6 @@
    "entityType":"GROUP",
    "eventType":"GROUP_DELETED",
    "eventData":{
-      "name":"developers"
+      "id":"e2a530e251d3675034d23f5c5f87f54ec3182a088ba7d13350824794f8e6b76e"
    }
 }

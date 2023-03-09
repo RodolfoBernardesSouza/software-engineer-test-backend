@@ -2,12 +2,11 @@
    "entityType":"USER",
    "eventType":"USER_CREATED",
    "eventData":{
-      "name":"joazinho",
-      "email":"abc@wow.com",
-      "password" : "xpto",
+      "name":"Rodolfo Souza",
+      "email":"rodolfo.b2@gmail.com",
+      "password" : "123456",
       "groups":[
-         "111",
-         "222"
+         "ee0b1e6ad69be79bbad963014bc6324d4ddfd03f05c4c5c3c4de292b03a089bb"         
       ]
    }
 }

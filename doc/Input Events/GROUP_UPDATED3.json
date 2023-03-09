@@ -1,0 +1,8 @@
+{
+   "entityType":"GROUP",
+   "eventType":"GROUP_UPDATED",
+   "eventData":{
+      "name":"Novo nome sem user",
+      "id":"e094a4de785cbaaac904ec86f86223a22e9fb361002beac412354fc6e286a37b"
+   }
+}

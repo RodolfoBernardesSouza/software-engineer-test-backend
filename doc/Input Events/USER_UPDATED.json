@@ -2,12 +2,12 @@
    "entityType":"USER",
    "eventType":"USER_UPDATED",
    "eventData":{
-      "name":"zezinho",
-      "email":"ze@wow.com",
-      "password" : "abcd",
+      "id" : "ea6422639cafdbbc3c9856962d54f98a7cfda8bf40eabd260b387b573cea69d7",
+      "name":"Rodolfo Bernardes Souza",
+      "email":"rodolfo.souza@watchguard.com",
+      "password" : "newpass",
       "groups":[
-         "333",
-         "444"
+         "bf5a246c11bfe2a4587922f449222a12984e7fd6358b734c2b791e926aecf841"
       ]
    }
 }

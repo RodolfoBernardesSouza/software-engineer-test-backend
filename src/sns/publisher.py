@@ -13,17 +13,27 @@ log = CustomLog().setup_logger()
 class SNSPublisher:
     @staticmethod
     def publish(*, message: dict):
+        log.info(f'publishing a {message["entityType"]} event: {message["eventType"]}')
+        sns_event = message
         if message["entityType"] == 'USER':
             if message["eventType"] == 'USER_DELETED':
                 sns_event = UserSNSEventModel.build_user_delete_sns_event(message=message)
-                log.info(f'publishing a USER DELETED event: {sns_event}')
-            else:
+            elif message["eventType"] == 'USER_UPDATED':
+                sns_event = UserSNSEventModel.build_user_update_sns_event(message=message)
+            elif message["eventType"] == 'USER_CREATED':
                 sns_event = UserSNSEventModel.build_user_sns_event(message=message)
-                log.info(f'publishing a USER event: {sns_event}')
         else:
-            sns_event = GroupSNSEventModel.build_group_sns_event(message=message)
-            log.info(f'publishing a GROUP event: {sns_event}')
+            if message["eventType"] == 'GROUP_UPDATED':
+                sns_event = GroupSNSEventModel.build_group_update_sns_event(message=message)
+            elif message["eventType"] == 'GROUP_CREATED':
+                sns_event = GroupSNSEventModel.build_group_sns_event(message=message)
+            elif message["eventType"] == 'GROUP_DELETED':
+                sns_event = GroupSNSEventModel.build_group_delete_sns_event(message=message)
 
+        SNSPublisher.__send(sns_event=sns_event)
+
+    @staticmethod
+    def __send(*, sns_event: dict):
         client = boto3.client('sns')
         response = client.publish(
             TargetArn=env.sns_topic_arn,
@@ -46,11 +56,23 @@ class UserSNSEventModel:
         return EnvelopModel.build_event_envelop(message=message, event_data=user_data)
 
     @staticmethod
+    def build_user_update_sns_event(*, message: dict) -> dict:
+        message_event_data = message['eventData']
+        user_data = dict({
+            'name': message_event_data['name'],
+            'id': message_event_data['id'],
+            'email': message_event_data['email'],
+            'groups': message_event_data['groups'],
+            'password': UserSNSEventModel.__hash_password(password=message_event_data['password'])
+        })
+        return EnvelopModel.build_event_envelop(message=message, event_data=user_data)
+
+    @staticmethod
     def build_user_delete_sns_event(*, message: dict) -> dict:
         message_event_data = message['eventData']
         user_data = dict({
             'name': '',
-            'email': message_event_data['email'],
+            'id': message_event_data['id'],
             'groups': '',
             'password': ''
         })
@@ -66,7 +88,7 @@ class UserSNSEventModel:
 
         # Hash password
         password_hash_salt = hashlib.sha256(salt.encode() + byte_password).hexdigest() + ':' + salt
-        #log.debug(f'byte_hash {password_hash_salt}')
+        # log.debug(f'byte_hash {password_hash_salt}')
 
         return password_hash_salt
 
@@ -74,10 +96,27 @@ class UserSNSEventModel:
 class GroupSNSEventModel:
 
     @staticmethod
+    def build_group_update_sns_event(*, message: dict) -> dict:
+        message_event_data = message['eventData']
+        group_data = dict({
+            'name': message_event_data['name'],
+            'id': message_event_data['id']
+        })
+        return EnvelopModel.build_event_envelop(message=message, event_data=group_data)
+
+    @staticmethod
     def build_group_sns_event(*, message: dict) -> dict:
         message_event_data = message['eventData']
         group_data = dict({
             'name': message_event_data['name']
+        })
+        return EnvelopModel.build_event_envelop(message=message, event_data=group_data)
+
+    @staticmethod
+    def build_group_delete_sns_event(*, message: dict) -> dict:
+        message_event_data = message['eventData']
+        group_data = dict({
+            'id': message_event_data['id']
         })
         return EnvelopModel.build_event_envelop(message=message, event_data=group_data)
 

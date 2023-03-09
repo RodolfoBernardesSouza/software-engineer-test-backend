@@ -8,7 +8,7 @@ from logging import Logger
 class Environment:
     aws_region: str = getenv('REGION')
     table_name: str = getenv('CACHE_TABLE')
-    sns_topic_arn: str = 'arn:aws:sns:us-east-1:849681156123:software-engineer-test-backend-dev-messageTopic'
+    sns_topic_arn: str = 'arn:aws:sns:us-east-1:849681156123:sandbox-test-wg-dev-messageTopic'
 
 
 @dataclass
@@ -31,6 +31,8 @@ class CustomLog:
         logger.setLevel(logging.INFO)
         logger.addHandler(handler)
         return logger
+
+
 @dataclass
 class JsonSchema:
 
@@ -74,10 +76,10 @@ class JsonSchema:
                 "eventData": {
                     "type": "object",
                     "properties": {
-                        "email": {"type": "string"}
+                        "id": {"type": "string"}
                     },
                     "required": [
-                        "email"
+                        "id"
                     ]
                 }
             },
@@ -87,6 +89,39 @@ class JsonSchema:
                 "eventData"
             ]
         }
+
+        user_update_schema = {
+            "$schema":"http://json-schema.org/draft-04/schema#",
+            "type":"object",
+            "properties":{
+                "entityType":{"type":"string"},
+                "eventType":{"type":"string"},
+                "eventData":{
+                    "type":"object",
+                    "properties":{
+                        "id":{"type":"string"},
+                        "name":{"type":"string"},
+                        "email":{"type":"string"},
+                        "password":{"type":"string"},
+                        "groups":{"type":"array","items":[{"type":"string"},{"type":"string"}]}
+                    },
+                    "required":[
+                        "id",
+                        "name",
+                        "email",
+                        "password",
+                        "groups"
+                    ]
+                }
+            },
+            "required":[
+                "entityType",
+                "eventType",
+                "eventData"
+            ]
+        }
+
+
 
 #TODO add restrictions for empty atributes
         group_schema = {
@@ -102,6 +137,54 @@ class JsonSchema:
                     },
                     "required": [
                         "name"
+                    ]
+                }
+            },
+            "required": [
+                "entityType",
+                "eventType",
+                "eventData"
+            ]
+        }
+
+        group_update_schema = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "entityType": {"type": "string"},
+                "eventType": {"type": "string"},
+                "eventData": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "id": {"type": "string"}
+                    },
+                    "required": [
+                        "name",
+                        "id"
+                    ]
+                }
+            },
+            "required": [
+                "entityType",
+                "eventType",
+                "eventData"
+            ]
+        }
+
+        group_delete_schema = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "entityType": {"type": "string"},
+                "eventType": {"type": "string"},
+                "eventData": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"}
+                    },
+                    "required": [
+                        "id"
                     ]
                 }
             },
